@@ -3,7 +3,7 @@ import gym
 import tensorflow as tf
 import random as rd
 import numpy as np
-def create_trajectory(model):
+def create_trajectory(model,render = False,epsilon = 0.7):
     """
     create trajectory given the model
     """
@@ -17,9 +17,15 @@ def create_trajectory(model):
     for _ in range(1000):
         action = model(tf.cast(tf.expand_dims(observation,axis = 0),tf.float32))
 
-        new_observation, reward, done, _ = env.step(tf.argmax(tf.squeeze(action,axis = 0)).numpy())
+        # epsilon greedy policy
+        if rd.randint(0,100)<epsilon*100:
+            new_observation, reward, done, _ = env.step(tf.argmax(tf.squeeze(action,axis = 0)).numpy())
+        else:
+            new_observation, reward, done, _ = env.step(rd.randint(0,3))
         s_a_r_s.append((tf.convert_to_tensor(observation),tf.argmax(tf.squeeze(action,axis = 0)),tf.convert_to_tensor(reward),tf.convert_to_tensor(new_observation)))
         observation = new_observation
+        if render:
+            env.render()
 
         if done:
             observation, _ = env.reset(return_info=True)
@@ -73,15 +79,17 @@ create_trajectory(model)
 create_trajectory(model_target)
 
 buffer = []
-optimizer = tf.keras.optimizers.Adam()
+optimizer = tf.keras.optimizers.Adam(learning_rate = 0.0001)
 loss_function = tf.keras.losses.MeanSquaredError()
+epsilon = 0.7
 for i in range(1000):
 
     # apply polyak averaging
-    model_target.set_weights((1-0.01)*np.array(model_target.get_weights(),dtype = object) + 0.01*np.array(model.get_weights(),dtype = object))
+    model_target.set_weights((1-0.1)*np.array(model_target.get_weights(),dtype = object) + 0.1*np.array(model.get_weights(),dtype = object))
     
     # add new data to replay buffer
-    new_data = create_trajectory(model)
+    new_data = create_trajectory(model, True if i%50 == 0 else False,epsilon)
+    epsilon += 0.001
     reward = []
     for s,a,r,new_s in new_data:
         reward.append(tf.cast(r,tf.float32))
@@ -94,7 +102,7 @@ for i in range(1000):
     
     for _ in range(100):
 
-        s,a,r,s_new = sample_minibatch(buffer,32)
+        s,a,r,s_new = sample_minibatch(buffer,128)
         with tf.GradientTape() as tape:
 
             # calculate the corresponding q values
