@@ -1,0 +1,19 @@
+Dear group 20,
+
+your code is well structured. You implementation of the gridworld implements in an interesting way on how to decide where to put the barriers and rewards, and it does work good. 
+We especially like, that you have an error handling at the beginning. 
+
+But we also have some remarks on the code: 
+- Your code barely contains any comments, which makes it difficult to understand. It would also be nice to have some docstrings in the functions. Especially in the gridworld class, the parameters for the Constructor should be described somehow, as it is not very self explanatory. To know what should be put inside one has to check your example code. 
+- To make your output easier to understand you could add a short explanation on which sign means what (e.g. X is a barrier), and a headline for each printing to distinguish gridworld, policy and q-values. Now one has to look it up in the code. 
+- It would be beneficial having a variable to safe the value of the reward of the terminal state, bc. it appears more than once. To be sure it is the same and you do not forget to change one (e.g. take max reward value)
+- we think the distinction in policy and q-values is not necessary, because the policy is just the max q-value and 
+
+And now to the n-step-SARSA algorithm: 
+- You are updating you Q-values in the right way, but only every n steps. It is supposed to change the Q values after each step, but always n steps in delay. We visualized the world after each step for one episode to check that. We hope we am not mistaken. 
+- If we want to use your n_step_sarsa as a monte carlo algorithm (sarsa_steps = 10000000000000), it does run, but the q-values do not change at all, probably because of the problem we stated before.
+
+We hope our review is helpful. It did took some time, so please have some more comments the nexts time, that might make it easier. 
+
+Best regards, 
+Group 8
