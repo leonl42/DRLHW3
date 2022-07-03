@@ -1,0 +1,14 @@
+First of all your project structure is a bit unorganized.
+Empty readme, empty files and often it is not clear what role which file has.
+
+It was also hard to understand some code blocks and/or the role of some functions or operations since comments were spare.
+There were also some commented print statements/commented lines of code. 
+
+I really liked the way the gridworld was printed to the console. That looked nice.
+
+However, I also would have liked a visualization of the Q-values. It would also have been better if the printed values 
+for n_of_episodes and ca had some kind of string before them indicating their role.
+
+Best regards,
+Group 8
+
